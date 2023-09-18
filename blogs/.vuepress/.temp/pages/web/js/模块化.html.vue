@@ -1,0 +1,644 @@
+<template><div><h1 id="js模块化" tabindex="-1"><a class="header-anchor" href="#js模块化" aria-hidden="true">#</a> JS模块化</h1>
+<h3 id="一、什么是模块化" tabindex="-1"><a class="header-anchor" href="#一、什么是模块化" aria-hidden="true">#</a> 一、什么是模块化</h3>
+<hr>
+<ul>
+<li>
+<p>到底什么是模块化、模块法开发呢？</p>
+<ul>
+<li>事实上模块化开发最终的目的是将程序划分成<strong>一个个小的结构，</strong></li>
+<li>这个结构中编写属于自己的逻辑代码，有自己的作用域，不会<strong>影响</strong>到其他的结构，</li>
+<li>这个结构可以将自己希望暴露的变量、函数、对象等<strong>导出</strong>给其他结构来使用，</li>
+<li>也可以通过某种方式，<strong>导入</strong>其他结构中的变量、函数、对象等；</li>
+</ul>
+</li>
+<li>
+<p>上面提到的==结构==，就是模块；按照<strong>这种结构划分开发程序的过程</strong>，就是模块化开发的过程。</p>
+</li>
+<li>
+<p>无论你多么喜欢JavaScript，以及它现在发展的有多好，它都有很多的缺陷：</p>
+<ul>
+<li>
+<p>比如var定义的变量作用域问题；</p>
+</li>
+<li>
+<p>比如JavaScript的面向对象并不能像常规面向对象语言一样使用class(类)；</p>
+</li>
+<li>
+<p>比如JavaScript没有模块化的问题；</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Brendan Eich本人也多次承认过JavaScript设计之初的缺陷，但是随着JavaScript的发展以及标准化，存在的缺陷问题基本都得到了完善</p>
+</li>
+</ul>
+<h3 id="二、模块化的历史" tabindex="-1"><a class="header-anchor" href="#二、模块化的历史" aria-hidden="true">#</a> 二、模块化的历史</h3>
+<hr>
+<ul>
+<li>
+<p>在网页开发的早期，Brendan Eich开发JavaScript仅仅作为一种脚本语言，做一些简单的表单验证或动画实现等，那个时候代码还是很少的；</p>
+</li>
+<li>
+<p>但是随着前端和JavaScript的快速发展，JavaScript代码变得越来越复杂了：</p>
+<ul>
+<li>Ajax的出现，前后端开发分离，意味着后端返回数据后，我们需要通过JavaScript进行前端页面的渲染；</li>
+<li>包括前端路由、状态管理等等一系列复杂的需求需要通过JavaScript来实现；</li>
+<li>还有node的实现，JavaScript编写复杂的后端程序，没有模块化是致命的硬伤。</li>
+</ul>
+</li>
+<li>
+<p>所以，模块化已经是JavaScript一个非常迫切的需求：</p>
+<ul>
+<li>但是JavaScript本身，直到ES6(2015)才推出自己的模块化方案；</li>
+<li>在此之前，为了让JavaScript支持模块化，JavaScript社区中涌现出了很多不同的模块化规范：AMD、CMD、COMMONJS等。</li>
+</ul>
+</li>
+</ul>
+<h3 id="三、没有模块化带来的问题" tabindex="-1"><a class="header-anchor" href="#三、没有模块化带来的问题" aria-hidden="true">#</a> 三、没有模块化带来的问题</h3>
+<ul>
+<li>
+<p>我们先来看一个案例，有一个项目，需要两个人(why、kobe)来一起协作来完成，他们分别创建了一个以他们为命名的文件，他们分别在自己的文件都创建一个index.js文件，这两个文件分别写一点代码，让我们看看在浏览器运行会有什么样的效果</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// why/index.js</span>
+<span class="token keyword">var</span> name <span class="token operator">=</span> <span class="token string">'why'</span>
+<span class="token keyword">var</span> isFlag <span class="token operator">=</span> <span class="token boolean">true</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// kobe/index.js</span>
+<span class="token keyword">var</span> name <span class="token operator">=</span> <span class="token string">'kobe'</span>
+<span class="token keyword">var</span> isFlag <span class="token operator">=</span> <span class="token boolean">false</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// 在index.html分别引入</span>
+<span class="token operator">&lt;</span>script src<span class="token operator">=</span><span class="token string">"./why/index.js"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span>
+<span class="token operator">&lt;</span>script src<span class="token operator">=</span><span class="token string">"./kobe//index.js"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span>
+
+<span class="token comment">// 并没有任何的错误，代码是没有问题的，我们继续，why在他的文件中又创建了一个why.js文件，在这个文件中why编写了属于他自己的业务代码</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// why/why.js</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>isFlag<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>在浏览器运行，什么都没有，但是在项目中如果没有出现，这就是一个bug，然后why就会很奇怪，我明明定义的isFlag是为true的，但是为什么会没有显示呢，现在这个项目只有两个人写，也只有三个js文件，一下就可以知道是kobe他也定义了一个isFlag变量，所以才会没有显示，但是如果这个项目有上千个js文件，那这样就很难很难找到这个bug的，这就是没有模块化带来的问题，==命名冲突==</p>
+<p>当然，我们可以有办法解决上面的问题: ==立即函数调用表达式(IIFE)==</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// why/index.js</span>
+<span class="token keyword">var</span> moduleWhy <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> name <span class="token operator">=</span> <span class="token string">'why'</span>
+  <span class="token keyword">var</span> isFlag <span class="token operator">=</span> <span class="token boolean">true</span>
+
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    name<span class="token punctuation">,</span>
+    isFlag
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// kobe/index.js</span>
+<span class="token keyword">var</span> moduleKobe <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">var</span> name <span class="token operator">=</span> <span class="token string">'kobe'</span>
+  <span class="token keyword">var</span> isFlag <span class="token operator">=</span> <span class="token boolean">false</span>
+
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    name<span class="token punctuation">,</span>
+    isFlag
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// why/why.js</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>moduleWhy<span class="token punctuation">.</span>isFlag<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>moduleWhy<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p>但是，我们其实带来了新的问题</p>
+<ul>
+<li>第一，必须记得每一个模块中返回对象的命名，才能在其他模块使用过程中正确的使用；</li>
+<li>第二，代码写起来混乱不堪，每个文件中的代码都需要包裹在一个匿名函数中来编写；</li>
+<li>第三，在没有合适的规范情况下，每个人、每个公司都可能会任意命名、甚至出现模块名称相同的问题。</li>
+</ul>
+</li>
+<li>
+<p>所以，我们会发现，虽然实现了模块化，但是我们的实现过于简单，并且是没有规范的。</p>
+<ul>
+<li>我们需要指定一定的规范来约束每个人都按照这个规范去编写模块化的代码；</li>
+<li>这个规范中应该包括核心功能：模块本身可以导出暴露的属性，模块又可以导入自己需要的属性；</li>
+<li>JavaScript社区中为了解决上面的问题，涌现出一系列好用的规范，AMD、CMD、COMMONJS等。</li>
+</ul>
+</li>
+</ul>
+<h3 id="四、commonjs" tabindex="-1"><a class="header-anchor" href="#四、commonjs" aria-hidden="true">#</a> 四、CommonJS</h3>
+<hr>
+<h4 id="_1、和node的关系" tabindex="-1"><a class="header-anchor" href="#_1、和node的关系" aria-hidden="true">#</a> 1、和node的关系</h4>
+<hr>
+<ul>
+<li>
+<p>我们需要知道CommonJS是一个规范，最初提出来是在浏览器意外的地方使用哪个，并且当时被命名为ServerJS，后来为了体现它的广泛性，修改为CommonJS，平时我们也会简称为CJS；</p>
+</li>
+<li>
+<p>Node是CommonJS在服务器端一个具有代表性的实现</p>
+</li>
+<li>
+<p>所以，Node中对CommonJS进行了支持和实现，让我们在开发node的过程中可以方便的进行模块化开发：</p>
+<ul>
+<li>在Node中每一个js文件都是一个单独的模块；</li>
+<li>这个模块中包括CommonJS规范的核心变量：exports、module.exports、require；</li>
+<li>我们可以使用这些变量来方便的进行模块化开发。</li>
+</ul>
+</li>
+<li>
+<p>前面我们提到过模块化的核心是导出和导入，Node中对其进行了实现：</p>
+<ul>
+<li>exports和module.exports可以负责对模块中的内容进行导出；</li>
+<li>require函数可以帮助我们导入其他模块(自定义模块、系统模块、第三方库模块)中的内容。</li>
+</ul>
+</li>
+<li>
+<p>我们来看一下CommonJS的基本使用</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// kobe.js</span>
+<span class="token keyword">var</span> name <span class="token operator">=</span> <span class="token string">'kobe'</span>
+<span class="token keyword">var</span> age <span class="token operator">=</span> <span class="token number">19</span>
+
+<span class="token keyword">function</span> <span class="token function">sum</span><span class="token punctuation">(</span><span class="token parameter">num1<span class="token punctuation">,</span> num2</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> num1 <span class="token operator">+</span> num2
+<span class="token punctuation">}</span>
+
+
+<span class="token comment">// 导出</span>
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  name<span class="token punctuation">,</span>
+  age<span class="token punctuation">,</span>
+  sum
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// why.js</span>
+<span class="token comment">// 导入</span>
+<span class="token keyword">const</span> <span class="token punctuation">{</span> name<span class="token punctuation">,</span> age<span class="token punctuation">,</span> sum <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./kobe.js'</span><span class="token punctuation">)</span>
+
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>age<span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token function">sum</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>因为是CommonJs是在node中一种体现，所以，我们不应该在浏览器运行，而是应该在node中运行，直接在终端中敲命令运行。</p>
+</li>
+</ul>
+<h4 id="_2、内部原理" tabindex="-1"><a class="header-anchor" href="#_2、内部原理" aria-hidden="true">#</a> 2、内部原理</h4>
+<hr>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// kobe.js</span>
+<span class="token keyword">const</span> info <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'why'</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">age</span><span class="token operator">:</span> <span class="token number">18</span><span class="token punctuation">,</span>
+  <span class="token function-variable function">sum</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">num1<span class="token punctuation">,</span> num2</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> num1 <span class="token operator">+</span> num2
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+  info<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">'kobe'</span>
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token number">1000</span><span class="token punctuation">)</span>
+
+
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> info
+
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// why.js</span>
+<span class="token keyword">const</span> why <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./kobe.js'</span><span class="token punctuation">)</span>
+
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>why<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>why<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token number">2000</span><span class="token punctuation">)</span>
+
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>在kobe.js中定义了一个对象，在==内存==中会有一个储存这个对象的地址(==0x100==)，在kobe.js又导出了这个对象，相当于0x100有两个东西指向它，一个是kobe.js中info对象，另一个是kobe.js中module.exports对象也指向了0x100，在why.js中又引入了这个对象，赋值给why，所以，0x100有三个东西指向它，这就说明，这三个东西都是同一个东西；我们可以来验证一下我们得出的这个结论，在kobe.js中定时改变info里的属性，在why.js中定时打印这个改变的属性，显而易见，这个结论是对的。</p>
+<h4 id="_3、exports和module-exports" tabindex="-1"><a class="header-anchor" href="#_3、exports和module-exports" aria-hidden="true">#</a> 3、exports和module.exports</h4>
+<hr>
+<ul>
+<li>
+<p>上面我们是用module.exports导出，其实在Commonjs中还有一种导出方式exports</p>
+</li>
+<li>
+<p>注意：exports是一个对象，我们可以在这个对选哪个添加很多个属性，添加的属性会导出</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// 第二种导出方式</span>
+exports<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">'kobe'</span>
+exports<span class="token punctuation">.</span>age <span class="token operator">=</span> <span class="token number">18</span>
+exports<span class="token punctuation">.</span><span class="token function-variable function">sum</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">num1<span class="token punctuation">,</span> num2</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token keyword">return</span> num1 <span class="token operator">+</span> num2
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// 导入</span>
+<span class="token keyword">const</span> why <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./kobe.js'</span><span class="token punctuation">)</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p>module.exports和exports有什么关系或者区别呢？</p>
+</li>
+<li>
+<p>我们追溯根源，通过维基百科对CommonJS规范的解析：</p>
+<ul>
+<li>CommonJS中是没有module.exports的概念的；</li>
+<li>但是为了实现模块的导出，Node中使用的是Module的类，每一个模块都是Module的一个实例，也就是module；</li>
+<li>所以在Node中真正用于导出的其实根本不是exports，而是module.exports；</li>
+</ul>
+</li>
+<li>
+<p>但是，为什么exports也可以导出呢？</p>
+<ul>
+<li>
+<p>这是因为module对选哪个的exports属性是exports的一个引用；</p>
+</li>
+<li>
+<p>也就是说</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// 源码</span>
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+exports <span class="token operator">=</span> module<span class="token punctuation">.</span>exports
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ul>
+</li>
+</ul>
+<h4 id="_4、require函数细节" tabindex="-1"><a class="header-anchor" href="#_4、require函数细节" aria-hidden="true">#</a> 4、require函数细节</h4>
+<hr>
+<ul>
+<li>
+<p>require是一个函数，可以帮助我们引入一个文件(模块)中导出的对象</p>
+</li>
+<li>
+<p>那么，require的查找规则是怎么样的呢</p>
+<ul>
+<li><a href="https://nodejs.org/dist/latest-v14.x/docs/api/modules.html#modules_all_together" target="_blank" rel="noopener noreferrer">https://nodejs.org/dist/latest-v14.x/docs/api/modules.html#modules_all_together<ExternalLinkIcon/></a></li>
+</ul>
+</li>
+<li>
+<p>这些是一些比较常见的查找规则： 导入格式如下：require(X)</p>
+<ul>
+<li>
+<p>情况一：X是一个Node中的核心模块，比如path、http</p>
+<ul>
+<li>直接返回核心模块，并且停止查找</li>
+</ul>
+</li>
+<li>
+<p>情况二：X是以==./==或==../==或==/(根目录)==开头的</p>
+<ul>
+<li>
+<p>第一步：将X当做一个文件在对应的目录想变查找；</p>
+<ul>
+<li>1、如果有后缀名，按照后缀名的格式查找对应的文件</li>
+<li>2、如果没有后缀名，会按照如下顺序：
+<ul>
+<li>1&gt;直接查找==文件==X</li>
+<li>2&gt;查找X.js文件</li>
+<li>3&gt;查找X.json文件</li>
+<li>4&gt;查找X.node文件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>第二步：没有找到对应的文件，将X作为一个==目录==</p>
+<ul>
+<li>查找目录下的==index==文件
+<ul>
+<li>1&gt;查找X/index.js文件</li>
+<li>2&gt;查找X/index.json文件</li>
+<li>3&gt;查找X/index.node文件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>如果没有找到，那么报错：not found</p>
+</li>
+</ul>
+</li>
+<li>
+<p>情况三：直接是一个X，这个X不是一个路径，也不是一个Node中的核心模块，会去如下路径下查找</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code>console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>module<span class="token punctuation">.</span>paths<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// [</span>
+<span class="token comment">//   'E:\\js高级\\30_JS模块化解析\\02_CommonJS\\04_require细节\\node_modules',</span>
+<span class="token comment">//   'E:\\js高级\\30_JS模块化解析\\02_CommonJS\\node_modules',</span>
+<span class="token comment">//   'E:\\js高级\\30_JS模块化解析\\node_modules',</span>
+<span class="token comment">//   'E:\\js高级\\node_modules',</span>
+<span class="token comment">//   'E:\\node_modules'</span>
+<span class="token comment">// ]</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ul>
+</li>
+</ul>
+<h4 id="_5、模块的加载过程" tabindex="-1"><a class="header-anchor" href="#_5、模块的加载过程" aria-hidden="true">#</a> 5、模块的加载过程</h4>
+<hr>
+<ul>
+<li>
+<p>结论一：模块在被第一次引入时，模块中的js代码会被运行一次</p>
+</li>
+<li>
+<p>结论二：模块被多次引入时，会缓存，最终值加载(运行)一次</p>
+<ul>
+<li>为什么只会加载运行一次？</li>
+<li>这是因为每个模块对象module都有一个属性：loaded：</li>
+<li>为false表示还未加载，为true时表示已经加载</li>
+</ul>
+</li>
+<li>
+<p>结论三：模块被循环引入，那么加载顺序是什么？</p>
+<ul>
+<li>
+<p>如果出现如下图的模块的引用关系，那么加载顺序是什么呢？</p>
+<p><img src="@source/web/js/E:/我的笔记/img/image-20211208140954564.png" alt="image-20211208140954564"></p>
+</li>
+<li>
+<p>这个其实是一种数据结构：图结构；</p>
+</li>
+<li>
+<p>图结构在遍历的过程中，有深度优先探索和广度优先探索</p>
+</li>
+<li>
+<p>Node中采用的是深度优先算法</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="_6、缺点" tabindex="-1"><a class="header-anchor" href="#_6、缺点" aria-hidden="true">#</a> 6、缺点</h4>
+<hr>
+<ul>
+<li>
+<p>CommonJS加载模块是同步的：</p>
+<ul>
+<li>同步意味着只有等到对应的模块加载完毕，当前模块中的内容才能被运行。</li>
+</ul>
+</li>
+<li>
+<p>因为加载模块是同步的，所以，在浏览器中，我们通常不使用CommonJS规范；</p>
+</li>
+<li>
+<p>在早起为了可以在浏览器中使用模块化，通常会采用AMD或CMD；</p>
+</li>
+<li>
+<p>但是目前一方面现代的浏览器已经支持SE Modules，另一方面借助于webpack等工具可以实现对CommonJS或者ES Modules代码的转换；</p>
+</li>
+<li>
+<p>AMD和CMD已经使用非常少了</p>
+</li>
+</ul>
+<h3 id="五、es-module" tabindex="-1"><a class="header-anchor" href="#五、es-module" aria-hidden="true">#</a> 五、ES Module</h3>
+<hr>
+<h4 id="_1、认识es-module" tabindex="-1"><a class="header-anchor" href="#_1、认识es-module" aria-hidden="true">#</a> 1、认识ES Module</h4>
+<hr>
+<ul>
+<li>
+<p>JavaScript没有模块化一直是它的痛点，所以才会产生社区规范</p>
+</li>
+<li>
+<p>ES Module和CommonJS的模块化有一些不同之处：</p>
+<ul>
+<li>一方面它使用了inport和export关键字；</li>
+<li>另一方面它采用编译期的静态分析，并且也加入了动态引用的方式</li>
+</ul>
+</li>
+<li>
+<p>ES Module模块采用export和import关键字来实现模块化：</p>
+<ul>
+<li>export负责将模块内的内容导出；</li>
+<li>import负责从其他模块导入内容；</li>
+</ul>
+</li>
+<li>
+<p>采用ES Module将自动采用严格模式：use strict</p>
+<ul>
+<li>https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Strict_mode</li>
+</ul>
+</li>
+<li>
+<p>我们来看一下ES Module的基本使用</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// foo.js</span>
+<span class="token comment">// 导出</span>
+<span class="token keyword">export</span> <span class="token keyword">const</span> name <span class="token operator">=</span> <span class="token string">'foo'</span>
+<span class="token keyword">export</span> <span class="token keyword">const</span> age <span class="token operator">=</span> <span class="token number">18</span>
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'foo~'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// main.js</span>
+<span class="token comment">// 导入</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> name<span class="token punctuation">,</span> age<span class="token punctuation">,</span> foo <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'./foo.js'</span>
+
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>age<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// index.html</span>
+<span class="token operator">&lt;</span>script src<span class="token operator">=</span><span class="token string">"./main.js"</span> type<span class="token operator">=</span><span class="token string">"module"</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">></span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div></div></div><p>在浏览器运行时，必须要在script标签中添加一个属性 ==type=&quot;module&quot;==，而且必须要在本地开启一个本地服务，运行才不会报错。</p>
+<ul>
+<li>
+<p>这个错误在MDN上面有给出解释</p>
+</li>
+<li>
+<p>https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Modules</p>
+</li>
+<li>
+<p>在这里我用的IDE是VSCode，VSCode有一个插件：Live Server</p>
+<p><img src="@source/web/js/E:/我的笔记/img/image-20211208151718126.png" alt="image-20211208151718126"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="_2、export关键字" tabindex="-1"><a class="header-anchor" href="#_2、export关键字" aria-hidden="true">#</a> 2、export关键字</h4>
+<hr>
+<ul>
+<li>
+<p>export关键字是将一个模块中的变量、函数、类等导出；</p>
+</li>
+<li>
+<p>export关键字有三种方式导出模块中的内容：</p>
+<ul>
+<li>
+<p>方式一：在语句声明的前面直接加上export关键字</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token keyword">export</span> <span class="token keyword">const</span> name <span class="token operator">=</span> <span class="token string">'foo'</span>
+<span class="token keyword">export</span> <span class="token keyword">const</span> age <span class="token operator">=</span> <span class="token number">18</span>
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'foo~'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p>方式二：将所有需要导出的标识符，放到export后面的{}中</p>
+<ul>
+<li>
+<p>注意：这里的{}里面不是ES6的对象字面量的增强写法，{}也不是表示一个对象；</p>
+</li>
+<li>
+<p>所以：exports{ name: name }，是错误的写法；</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token keyword">const</span> name <span class="token operator">=</span> <span class="token string">'foo'</span>
+<span class="token keyword">const</span> age <span class="token operator">=</span> <span class="token number">18</span>
+<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'foo~'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token punctuation">{</span>
+  name<span class="token punctuation">,</span>
+  age<span class="token punctuation">,</span>
+  foo
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ul>
+</li>
+<li>
+<p>方式三：导出时给标识符起一个别名</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token keyword">export</span> <span class="token punctuation">{</span>
+  name <span class="token keyword">as</span> fName<span class="token punctuation">,</span>
+  age <span class="token keyword">as</span> fAge<span class="token punctuation">,</span>
+  foo <span class="token keyword">as</span> fFoo
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ul>
+</li>
+</ul>
+<h4 id="_3、import关键字" tabindex="-1"><a class="header-anchor" href="#_3、import关键字" aria-hidden="true">#</a> 3、import关键字</h4>
+<hr>
+<ul>
+<li>
+<p>import关键字负责从另外一个模块中导入内容</p>
+</li>
+<li>
+<p>导入内容的方式也有多种;</p>
+<ul>
+<li>
+<p>方式一：import { 标识符列表 } from ’模块‘</p>
+<ul>
+<li>
+<p>注意：这里的{}也不是一个对象，里面只是存放导入的标识符列表内容；</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> name<span class="token punctuation">,</span> age<span class="token punctuation">,</span> foo <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'./foo.js'</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div></li>
+</ul>
+</li>
+<li>
+<p>方式二：导入时给标识符起别名</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> name <span class="token keyword">as</span> fName<span class="token punctuation">,</span> age <span class="token keyword">as</span> fAge<span class="token punctuation">,</span> foo <span class="token keyword">as</span> fFoo <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'./foo.js'</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div></li>
+<li>
+<p>方式三：通过*将模块功能放到一个模块功能呢个对象上</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token keyword">import</span> <span class="token operator">*</span> <span class="token keyword">as</span> why <span class="token keyword">from</span> <span class="token string">'./foo.js'</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div></div></div></li>
+</ul>
+</li>
+</ul>
+<h4 id="_4、export和import结合使用" tabindex="-1"><a class="header-anchor" href="#_4、export和import结合使用" aria-hidden="true">#</a> 4、export和import结合使用</h4>
+<ul>
+<li>
+<p>我们在开发和封装一个功能库时，通常我们希望将暴露的所有接口都放到一个文件中；</p>
+</li>
+<li>
+<p>这样方便指定统一的接口规范，也方便阅读</p>
+</li>
+<li>
+<p>这个时候，我们就可以使用export和import结合使用；</p>
+</li>
+<li>
+<p>我们来看一下案例：我们utils文件中编写了两个js文件，这两个js文件的功能都是不同的，一个是数学计算的(math.js)，另一个是对所需要格式化的东西进行格式化(format.js)，这里面的代码我们简单来写一下：</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token comment">// utils/math.js</span>
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">sum</span><span class="token punctuation">(</span><span class="token parameter">num1<span class="token punctuation">,</span> num2</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> num1 <span class="token operator">+</span> num2
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">sub</span><span class="token punctuation">(</span><span class="token parameter">num1<span class="token punctuation">,</span> num2</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> num1 <span class="token operator">-</span> num2
+<span class="token punctuation">}</span>
+
+<span class="token comment">// utils/format.js</span>
+<span class="token keyword">function</span> <span class="token function">timeFormat</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token string">'2022-12-12 12:12'</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">function</span> <span class="token function">priceFormat</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token string">'22.22$'</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token punctuation">{</span>
+  timeFormat<span class="token punctuation">,</span>
+  priceFormat
+<span class="token punctuation">}</span>
+
+
+<span class="token comment">// utils/index.js</span>
+<span class="token comment">// 第一种：这是我们普遍使用的方式一</span>
+<span class="token comment">// import { sum, sub } from './math.js'</span>
+<span class="token comment">// import { timeFormat, priceFormat } from './format.js'</span>
+<span class="token comment">// export {</span>
+<span class="token comment">//   sum, </span>
+<span class="token comment">//   sub,</span>
+<span class="token comment">//   timeFormat,</span>
+<span class="token comment">//   priceFormat</span>
+<span class="token comment">// }</span>
+
+<span class="token comment">// 第二</span>
+<span class="token comment">// export { sum, sub } from './math.js'</span>
+<span class="token comment">// export { timeFormat, priceFormat } from './format.js'</span>
+
+
+<span class="token comment">// 第三</span>
+<span class="token keyword">export</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token string">'./math.js'</span>
+<span class="token keyword">export</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token string">'./format.js'</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ul>
+<h4 id="_5、default导出" tabindex="-1"><a class="header-anchor" href="#_5、default导出" aria-hidden="true">#</a> 5、Default导出</h4>
+<ul>
+<li>
+<p>前面我们学习的导出功能都是有名字的导出(name exports)：</p>
+<ul>
+<li>在导出export时指定了名字；</li>
+<li>在导入import时需要只要具体的名字；</li>
+</ul>
+</li>
+<li>
+<p>还有一种导出叫做==默认导出==(default export):</p>
+<ul>
+<li>默认导出时export时可以不需要指定名字；</li>
+<li>在导入时不需要使用{}，并且可以自己来指定名字；</li>
+</ul>
+</li>
+<li>
+<p>注意：在一个模块中，只能有一个默认导出</p>
+</li>
+<li>
+<p>我们来看一下代码：</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token keyword">const</span> name <span class="token operator">=</span> <span class="token string">'foo'</span>
+<span class="token keyword">const</span> age <span class="token operator">=</span> <span class="token number">18</span>
+
+<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'foo~'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token punctuation">{</span>
+  name<span class="token punctuation">,</span>
+  <span class="token comment">// 第一种默认导出</span>
+  <span class="token comment">// age as default,</span>
+  foot
+<span class="token punctuation">}</span>
+
+<span class="token comment">// 第二种默认导出，最常用的</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> foo
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ul>
+<h4 id="_6、import函数" tabindex="-1"><a class="header-anchor" href="#_6、import函数" aria-hidden="true">#</a> 6、import函数</h4>
+<ul>
+<li>
+<p>前面介绍过，ES Module是采用静态分析，先与模块内的其他语句执行。所以，下面的代码会报错</p>
+<div class="language-javascript line-numbers-mode" data-ext="js"><pre v-pre class="language-javascript"><code><span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token keyword">import</span> why <span class="token keyword">from</span> <span class="token string">'./why.js'</span>
+<span class="token punctuation">}</span>
+</code></pre><div class="line-numbers" aria-hidden="true"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>上面的代码中，引擎处理import语句是在编译时，这时不会去分析或执行if语句，所以import语句放在if代码块之中毫无意义，因此会报句法错误，而不是执行时错误。也就是说，import和export命令只能在模块的顶层，不能在代码块之中，比如，在if代码块之中，或在函数之中。</p>
+</li>
+<li>
+<p>但是在某种情况下，我们确确实实希望来动态加载某一个模块，根据不同的条件，动态的来加载模块的路径，在ES2020中就新增==import函数==</p>
+</li>
+<li>
+<p>import函数可以用在任何地方，不仅仅是模块，非模块的脚本也可以使用。它是运行时执行，也就是说，什么时候运行到这一句，就会加载指定的模块。</p>
+</li>
+<li>
+<p>import函数返回的是一个Promise，加载模块成功以后，这个模块会作为一个对象，当做then方法的参数。</p>
+</li>
+<li>
+<p>适用场景：</p>
+<ul>
+<li>1&gt; 按需加载</li>
+<li>2&gt; 条件加载</li>
+</ul>
+</li>
+</ul>
+<h4 id="_7、import-meta" tabindex="-1"><a class="header-anchor" href="#_7、import-meta" aria-hidden="true">#</a> 7、import.meta</h4>
+<hr>
+<ul>
+<li>import.meta是一个给JavaScript模块暴露特定上下文的元数据属性的对象：
+<ul>
+<li>这个对象包含了这个模块的信息，比如说这个模块的URL；</li>
+<li>这是ES2020中新增的特性。</li>
+</ul>
+</li>
+</ul>
+</div></template>
+
+
