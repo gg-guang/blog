@@ -9,43 +9,33 @@ export default defineUserConfig({
     logo: "/logo.jpg",
     author: "lgm-广广",
     authorAvatar: "/head.png",
-    docsRepo: "https://github.com/gg-guang",
+    docsRepo: "https://github.com/gg-guang/blog",
     docsBranch: "main",
-    docsDir: "blogs",
+    docsDir: "",
     lastUpdated: true,
-    lastUpdatedText: "",
+    lastUpdatedText: "上次更新:",
     // series 为原 sidebar
-    series: {
-      "/docs/theme-reco/": [
-        {
-          text: "module one",
-          children: ["home", "theme"],
-        },
-        {
-          text: "module two",
-          children: ["api", "plugin"],
-        },
-      ],
-    },
+    series: [
+    ],
     navbar: [
       { text: "前端", link: "/categories/web/1/" },
       { text: "生活", link: "/categories/life/1/" },
       { text: "标签", link: "/tags/js/1/" },
       { text: "关于", link: "/blogs/me/" },
-      // { text: "留言板", link: "/message/", icon: 'Chat' },
+      { text: "留言板", link: "/blogs/message/", icon: 'Chat' },
     ],
-    // commentConfig: {
-    //   type: 'valie',
-    //   // options 与 1.x 的 valineConfig 配置一致
-    //   options: {
-    //     // appId: 'xxx',
-    //     // appKey: 'xxx',
-    //     // placeholder: '填写邮箱可以收到回复提醒哦！',
-    //     // verify: true, // 验证码服务
-    //     // notify: true,
-    //     // recordIP: true,
-    //     // hideComments: true // 隐藏评论
-    //   },
-    // },
+    commentConfig: {
+      type: 'valine',
+      // options 与 1.x 的 valineConfig 配置一致
+      options: {
+        appId: 'cxlfGCkBwwRrYr4KTzj3raY7-gzGzoHsz',
+        appKey: 'Wkf7kIUwDfIyhVTTZTS1cqAq',
+        placeholder: '填写邮箱可以收到回复提醒哦！',
+        // verify: true, // 验证码服务
+        // notify: true,
+        // recordIP: true,
+        // hideComments: true // 隐藏评论
+      },
+    },
   }),
 });
