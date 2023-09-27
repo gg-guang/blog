@@ -6,9 +6,9 @@ export default defineUserConfig({
   description: "A lovely beauty's record.",
   theme: recoTheme({
     style: "@vuepress-reco/style-default",
-    logo: "/logo.jpg",
+    logo: "/avatar.jpg",
     author: "lgm-广广",
-    authorAvatar: "/head.png",
+    authorAvatar: "/avatar.jpg",
     docsRepo: "https://github.com/gg-guang/blog",
     docsBranch: "main",
     docsDir: "",
