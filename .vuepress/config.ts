@@ -4,6 +4,7 @@ import recoTheme from "vuepress-theme-reco";
 export default defineUserConfig({
   title: "亡类霜天竟自幼",
   description: "A lovely beauty's record.",
+  base: '/blog/',
   theme: recoTheme({
     style: "@vuepress-reco/style-default",
     logo: "/avatar.jpg",
