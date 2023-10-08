@@ -14,10 +14,9 @@ jobs:
 
     steps:
        # 拉取代码
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
-          # “最近更新时间” 等 git 日志相关信息，需要拉取全部提交记录
-          fetch-depth: 0
+          persist-credentials: false
 
       # 运行构建脚本
       - name: Build VuePress site
